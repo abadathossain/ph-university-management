@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { Schema, model } from 'mongoose';
-import bcrypt from 'bcrypt';
-import config from '../../config';
 import {
   TGuardian,
   TLocalGuardian,
@@ -71,10 +69,16 @@ const localGuradianSchema = new Schema<TLocalGuardian>({
 
 const studentSchema = new Schema<TStudent>({
   id: { type: String },
-  password: { type: String, required: true },
+  // password: { type: String, required: true },
   name: {
     type: userNameSchema,
     required: true,
+  },
+  user: {
+    type: Schema.Types.ObjectId,
+    required: [true, 'User Id required'],
+    unique: true,
+    ref: 'UserModel',
   },
   gender: {
     type: String,
@@ -100,24 +104,6 @@ const studentSchema = new Schema<TStudent>({
     required: true,
   },
   profileImg: { type: String },
-  isActive: {
-    type: String,
-    enum: ['active', 'blocked'],
-    default: 'active',
-  },
-});
-
-studentSchema.pre('save', async function (next) {
-  const user = this;
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_rounds),
-  );
-  next();
-});
-studentSchema.post('save', function (doc, next) {
-  doc.password = '';
-  next();
 });
 
 export const StudentModel = model<TStudent>(
