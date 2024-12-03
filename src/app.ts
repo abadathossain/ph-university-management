@@ -4,6 +4,7 @@ import cors from 'cors';
 import { studentRoutes } from './app/modules/student/student.route';
 import { UserRoutes } from './app/modules/user/user.route';
 import globalErrorHandeler from './app/middleware/globalErrorHandeler';
+import notFound from './app/middleware/notFound';
 const app = express();
 // const port = 3000;
 
@@ -23,5 +24,6 @@ app.get('/', (req: Request, res: Response) => {
 // console.log(`helloooo ${process.cwd()}`);
 
 app.use(globalErrorHandeler);
+app.use(notFound);
 
 export default app;
